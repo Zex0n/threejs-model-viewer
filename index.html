@@ -249,6 +249,16 @@
                 </li>
 
                 <li class='dropdown'>
+                    <a href='#'><img src="images/colour_pick.png" class="image" />Save as sprite</a>
+                    <ul>
+                        <li> <span>Save as sprite</span></li>
+                        <li><em id='save_as_sprite_log'></em></li>
+                        <li><button type="button" id="save_sprite" class="saveSpritesBtn"><i style="margin-right: 5px;" class="fa fa-download"></i> Save sprites</button></li>
+
+                    </ul>
+                </li>
+
+                <li class='dropdown'>
                     <a href='#'><img src="images/folder_icon.png" class="image" />Select/Drop Model File</a>
                     <ul>
                         <li style="background: #d9d9f2; color: black; text-align: center">Select from button or drag and drop model onto the viewer</li>
@@ -406,6 +416,7 @@
                         </li>
                     </ul>
                 </li>
+
             </ul>           
         </div>
         <!--Bottom Menu End-->
@@ -443,6 +454,14 @@
             <button class="animBtn" id="play">Play</button>
             <button class="animBtn" id="stop">Stop</button>
             <button class="animBtn" id="playAll">Play All</button>
+            <br />
+
+            <div>
+                <span> <span>Save as sprites</span></span>
+                <div><input type='number' class="sprites_cols" value="1" /></div>
+                <div><em id='save_as_sprites_log'></em></div>
+                <div><button type="button" id="save_sprites" class="saveSpritesBtn"><i style="margin-right: 5px;" class="fa fa-trash"></i> Save sprites</button></div>
+            </div>
         </div>
 
 

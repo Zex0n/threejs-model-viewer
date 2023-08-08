@@ -577,3 +577,36 @@ function stopAnimations() {
 
 document.getElementById("play").onclick = playAnimation;
 document.getElementById("stop").onclick = stopAnimations;
+
+function saveSprite() {
+    currentAnimation = actions[ animationsSelect.value ];
+    // console.log(scene);
+    // console.log(currentAnimation);
+    // console.log(renderer);
+    scene.background = null;
+    renderer.setClearAlpha( 0 );
+
+    setTimeout(() => {
+        var dataImg = renderer.domElement.toDataURL("image/png");
+        saveImage(dataImg, "frame");
+    }, 1000);
+
+    //document.write(renderer.domElement.toDataURL().replace(/^data:image\/png;base64,/, ''));
+    // if ( currentAnimation !== undefined ) {
+    //     stopAnimations();
+    //     currentAnimation.play();
+    // }
+}
+// document.getElementById("save_sprite").onclick = saveSprite;
+$('#save_sprite').click(function () {
+    saveSprite();
+});
+
+function saveImage(imagePath, imageName ){
+    const link = document.createElement('a');
+    link.style.display = 'none';
+    document.body.appendChild(link)
+    link.setAttribute('download', imageName + '.png');
+    link.setAttribute('href', imagePath.replace("image/png", "image/octet-stream"));
+    link.click();
+}

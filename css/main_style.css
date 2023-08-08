@@ -35,6 +35,18 @@ body {
     color:white;      
 }
 
+.saveSpritesBtn{
+    border: 1px solid #ccc;
+    display: inline-block;
+    padding: 6px 12px;
+    cursor: pointer;
+    color: #fff;
+    background: #4B5F83;
+}
+
+.saveSpritesBtn:hover{
+    background-color:#527aa3;
+}
 
 #anims {
     position: absolute;

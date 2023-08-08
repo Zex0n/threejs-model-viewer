@@ -35,6 +35,7 @@ var smooth = document.getElementById('smooth');
 var outline = document.getElementById('outline');
 
 var statsNode = document.getElementById('stats');
+var saveAsSprite = document.getElementById('save_as_sprite');
 
 //ANIMATION GLOBALS
 var animations = {}, animationsSelect = document.getElementById("animationSelect"),
@@ -89,7 +90,7 @@ function initScene(index) {
 
     //Setup renderer
     //renderer = new THREE.CanvasRenderer({ alpha: true });
-    renderer = new THREE.WebGLRenderer();
+    renderer = new THREE.WebGLRenderer({preserveDrawingBuffer: true, alpha: true});
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(window.innerWidth, window.innerHeight)
     renderer.setClearColor(0x292121); //565646, 29212
