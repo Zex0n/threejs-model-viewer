@@ -251,9 +251,25 @@
                 <li class='dropdown'>
                     <a href='#'><img src="images/colour_pick.png" class="image" />Save as sprite</a>
                     <ul>
-                        <li> <span>Save as sprite</span></li>
                         <li><em id='save_as_sprite_log'></em></li>
-                        <li><button type="button" id="save_sprite" class="saveSpritesBtn"><i style="margin-right: 5px;" class="fa fa-download"></i> Save sprites</button></li>
+                        <li><button type="button" id="save_sprite" class="saveSpritesBtn"><i style="margin-right: 5px;" class="fa fa-download"></i> Save current frame</button></li>
+                        <li><button type="button" id="save_as_sprites" class="saveSpritesBtn"><i style="margin-right: 5px;" class="fa fa-download"></i> Save current animation</button></li>
+
+                        <li><span>Set canvas size </span></li>
+                        <li>
+                            <label class="switch">
+                                <input type="checkbox" id="canvas_size">
+                                <span class="toggle round"></span>
+                            </label>
+                        </li>
+                        <li><span>Width</span></li>
+                        <li><input type='number' id="canvas_width" class="save_sprite_input" value="512" /></li>
+
+                        <li><span>Height</span></li>
+                        <li><input type='number' id="canvas_height" class="save_sprite_input"  value="512" /></li>
+
+                        <li><span>Count of frames</span></li>
+                        <li><input type='number' id="sprites_cols" class="save_sprite_input"  value="1" /></li>
 
                     </ul>
                 </li>
