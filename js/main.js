@@ -1,5 +1,5 @@
-var container = document.getElementById('container');
-var view = document.getElementById('main_viewer');
+var container = document.getElementById('container'),
+    view = document.getElementById('main_viewer');
 
 if (!Detector.webgl) Detector.addGetWebGLMessage();
 
@@ -18,24 +18,22 @@ var clock = new THREE.Clock();
 var ambient, directionalLight, directionalLight2, directionalLight3, pointLight, bg_colour;
 var backgroundScene, backgroundCamera, backgroundMesh;
 
-var amb = document.getElementById('ambient_light');
-var rot1 = document.getElementById('rotation');
-var wire = document.getElementById('wire_check');
-var model_wire = document.getElementById('model_wire');
-var phong = document.getElementById('phong_check');
-var xray = document.getElementById('xray_check');
-var glow = document.getElementById('glow_check');
-var grid = document.getElementById('grid');
-var polar_grid = document.getElementById('polar_grid');
-var axis = document.getElementById('axis');
-var bBox = document.getElementById('bBox');
-
-var transform = document.getElementById('transform');
-var smooth = document.getElementById('smooth');
-var outline = document.getElementById('outline');
-
-var statsNode = document.getElementById('stats');
-var saveAsSprite = document.getElementById('save_as_sprite');
+var amb = document.getElementById('ambient_light'),
+    rot1 = document.getElementById('rotation'),
+    wire = document.getElementById('wire_check'),
+    model_wire = document.getElementById('model_wire'),
+    phong = document.getElementById('phong_check'),
+    xray = document.getElementById('xray_check'),
+    glow = document.getElementById('glow_check'),
+    grid = document.getElementById('grid'),
+    polar_grid = document.getElementById('polar_grid'),
+    axis = document.getElementById('axis'),
+    bBox = document.getElementById('bBox'),
+    transform = document.getElementById('transform'),
+    smooth = document.getElementById('smooth'),
+    statsNode = document.getElementById('stats'),
+    saveAsSprite = document.getElementById('save_as_sprite'),
+    canvasSize = document.getElementById('canvas_size');
 
 //ANIMATION GLOBALS
 var animations = {}, animationsSelect = document.getElementById("animationSelect"),
@@ -340,7 +338,7 @@ function removeModel() {
     amb.checked = false; rot1.checked = false; wire.checked = false;
     model_wire.checked = false; phong.checked = false; xray.checked = false;
     glow.checked = false; grid.checked = false; polar_grid.checked = false;
-    axis.checked = false; bBox.checked = false; smooth.checked = false; 
+    axis.checked = false; bBox.checked = false; smooth.checked = false; canvasSize.checked = false;
     transform.checked = false, smooth.disabled = false; //Uncheck any checked boxes
     
     transformControls.detach(scene);

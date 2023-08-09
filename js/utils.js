@@ -74,6 +74,7 @@ function colladaMerge(dae, filename) {
             setWireframeAndModel(model);
             setPhong(model);
             setXray(model);
+            setCanvasSize(model);
         }
 
     });
@@ -248,6 +249,18 @@ function setPhong(mod, originalMat) {
               phong.checked ? mod.material = materials.phongMaterial : mod.material = materials.default_material;
           }
      });
+
+}
+
+function setCanvasSize(mod) {
+    alert("555");
+    $('#canvas_size').on('change', function () {
+        camera.aspect = 512 / 512;
+        camera.updateProjectionMatrix();
+        renderer.setSize( 512, 512 );
+        alert("111");
+        //canvasSize.checked ? mod.material = materials.phongMaterial : mod.material = originalMat;
+    });
 
 }
 
