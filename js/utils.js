@@ -253,16 +253,17 @@ function setPhong(mod, originalMat) {
 }
 
 function setCanvasSize(mod) {
-    alert("555");
-    $('#canvas_size').on('change', function () {
-        camera.aspect = 512 / 512;
-        camera.updateProjectionMatrix();
-        renderer.setSize( 512, 512 );
-        alert("111");
-        //canvasSize.checked ? mod.material = materials.phongMaterial : mod.material = originalMat;
-    });
+    console.log("555");
+
 
 }
+$('#canvas_size').on('change', function () {
+    camera.aspect = 512 / 512;
+    camera.updateProjectionMatrix();
+    renderer.setSize( 512, 512 );
+    console.log("111");
+    //canvasSize.checked ? mod.material = materials.phongMaterial : mod.material = originalMat;
+});
 
 function setXray(mod, originalMat) {
 
