@@ -74,7 +74,6 @@ function colladaMerge(dae, filename) {
             setWireframeAndModel(model);
             setPhong(model);
             setXray(model);
-            setCanvasSize(model);
         }
 
     });
@@ -252,18 +251,28 @@ function setPhong(mod, originalMat) {
 
 }
 
-function setCanvasSize(mod) {
-    console.log("555");
+$(document).ready(function(){
+    $('#canvas_size').change(function() {
+        //console.log(canvas);
+        if (canvasSize.checked) {
+            var canvas_width = $('#canvas_width').val(),
+                canvas_height = $('#canvas_height').val();
 
+            camera.aspect = canvas_width / canvas_height;
+            renderer.setSize(canvas_width, canvas_height);
+            $('#main_viewer').css('border', '3px #757575 solid');
+            $('#main_viewer').css('margin-right', '300px');
+        } else {
+            camera.aspect = (window.innerWidth / window.innerHeight);
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            $('#main_viewer').css('border', '0');
+            $('#main_viewer').css('margin-right', 'auto');
 
-}
-$('#canvas_size').on('change', function () {
-    camera.aspect = 512 / 512;
-    camera.updateProjectionMatrix();
-    renderer.setSize( 512, 512 );
-    console.log("111");
-    //canvasSize.checked ? mod.material = materials.phongMaterial : mod.material = originalMat;
+        }
+        camera.updateProjectionMatrix();
+    });
 });
+
 
 function setXray(mod, originalMat) {
 
@@ -534,6 +543,15 @@ function animControl( object ) {
     }
 }
 
+function saveAnimationSprites() {
+    currentAnimation = actions[ animationsSelect.value ];
+
+    if ( currentAnimation !== undefined ) {
+        const animationClip = currentAnimation._clip;
+
+        console.log(currentAnimation);
+    }
+}
 function playAnimation() {
 
     currentAnimation = actions[ animationsSelect.value ];
@@ -623,4 +641,53 @@ function saveImage(imagePath, imageName ){
     link.setAttribute('download', imageName + '.png');
     link.setAttribute('href', imagePath.replace("image/png", "image/octet-stream"));
     link.click();
+}
+
+class AnimationSlider {
+  constructor(mixer, model) {
+    this._fakeDelta = 0;
+    this._mixer = mixer;
+    this._clips = model.animations;
+    this._percentage = 0;
+    // this._currentFrame = 0;
+
+    this.anims = [];
+    for (let i = 0, len = this._clips.length; i < len; i++) {
+      const clip = this._clips[i];
+      const action = this._mixer.clipAction(clip);
+      action.play();
+      action.paused = true;
+      //
+      this.anims.push({ clip, action });
+    }
+  }
+
+  /**
+   * Sets the animation to an exact point.
+   * @param percentage - A number from 0 to 1, where 0 is 0% and 1 is 100%.
+   */
+  setPercentage(percentage) {
+    if (this._percentage === percentage) {
+      return;
+    }
+
+    for (let i = 0, len = this.anims.length; i < len; i++) {
+      const { clip, action } = this.anims[i];
+      action.time = percentage * clip.duration;
+      this._mixer.update(++this._fakeDelta);
+    }
+
+    this._percentage = percentage;
+  }
+
+  setFrame(frameNumber, frameLength) {
+      // this.anims.length / 100
+    for (let i = 0, len = this.anims.length; i < len; i++) {
+      const { clip, action } = this.anims[i];
+      action.time = percentage * clip.duration;
+      this._mixer.update(++this._fakeDelta);
+    }
+
+    this._percentage = percentage;
+  }
 }

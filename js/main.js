@@ -90,7 +90,7 @@ function initScene(index) {
     //renderer = new THREE.CanvasRenderer({ alpha: true });
     renderer = new THREE.WebGLRenderer({preserveDrawingBuffer: true, alpha: true});
     renderer.setPixelRatio(window.devicePixelRatio);
-    renderer.setSize(window.innerWidth, window.innerHeight)
+    renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setClearColor(0x292121); //565646, 29212
 
     view.appendChild(renderer.domElement);
