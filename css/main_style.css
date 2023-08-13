@@ -359,14 +359,14 @@ input:checked + .grid:before {
 }
 
 .menu_item li.dropdown{
-    color: #fff; padding:4px 12px; border: 3px solid #bbb;
+    color: #fff; padding:1px 12px; border: 1px solid #bbb;
 }
 
 .menu_item li, .bottom_menu_item li { 
     border-top:0; margin: 0; background:#1d1e1e;  margin-top: 8px; 
 }
 .menu_item li a, .bottom_menu_item li a{
-    text-decoration:none; color:#fff; display:inline-block; padding:8px 12px; width:93%;
+    text-decoration:none; color:#fff; display:inline-block; padding:1px 12px; width:93%;
 }
 .menu_item li a:hover, .bottom_menu_item li a:hover{
     background: #494a4c; text-decoration:none;
@@ -382,6 +382,10 @@ input:checked + .grid:before {
 .image{
     float: left; 
     padding-right: 25px;
+    width: 20px;
+    filter: gray; /* IE6-9 */
+    -webkit-filter: grayscale(1); /* Google Chrome, Safari 6+ & Opera 15+ */
+    filter: grayscale(1); /* Microsoft Edge and Firefox 35+ */
 }
 
 #bottom_menu{

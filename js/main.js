@@ -37,7 +37,8 @@ var amb = document.getElementById('ambient_light'),
 
 //ANIMATION GLOBALS
 var animations = {}, animationsSelect = document.getElementById("animationSelect"),
-animsDiv = document.getElementById("anims"), mixer, currentAnimation, actions = {};
+    animsDiv = document.getElementById("anims"), mixer, currentAnimation, actions = {},
+    save_sprites;
 
 //X-RAY SHADER MATERIAL
 //http://free-tutorials.org/shader-x-ray-effect-with-three-js/
@@ -90,7 +91,7 @@ function initScene(index) {
     //renderer = new THREE.CanvasRenderer({ alpha: true });
     renderer = new THREE.WebGLRenderer({preserveDrawingBuffer: true, alpha: true});
     renderer.setPixelRatio(window.devicePixelRatio);
-    renderer.setSize(window.innerWidth, window.innerHeight)
+    renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setClearColor(0x292121); //565646, 29212
 
     view.appendChild(renderer.domElement);
