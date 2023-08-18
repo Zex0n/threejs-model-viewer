@@ -82,6 +82,9 @@ var loadFile = function (file) {
                 alert("Problem parsing file: " + filename + "\n\n" + "ERROR MESSAGE: " + err.message);
             }
 
+            model.receiveShadow = true;
+            model.castShadow = true;
+
             model.traverse(function (child) {
                 if (child instanceof THREE.Mesh) {
 
@@ -110,6 +113,9 @@ var loadFile = function (file) {
             setSmooth(model);
 
             model.position.set(0, 0, 0);
+                console.log("----MODEL 3 ----");
+                model.receiveShadow = true;
+                model.castShadow = true;
 
             setBoundBox(model);
             setPolarGrid(model);
@@ -187,6 +193,9 @@ var loadFile = function (file) {
                 setSmooth(model);
 
                 model.position.set(0, 0, 0);
+                console.log("----MODEL 4 ----");
+                model.receiveShadow = true;
+                model.castShadow = true;
 
                 setBoundBox(model);
                 setPolarGrid(model);
@@ -330,6 +339,9 @@ var loadFile = function (file) {
                 document.getElementById('smooth-model').innerHTML = "Smooth Model (Disabled)";
 
                 model.position.set(0, 0, 0);
+                console.log("----MODEL 1 ----");
+                model.receiveShadow = true;
+                model.castShadow = true;
 
                 setBoundBox(model);
                 setPolarGrid(model);
@@ -413,6 +425,9 @@ var loadFile = function (file) {
                     document.getElementById('smooth-model').innerHTML = "Smooth Model (Disabled)";
 
                     model.position.set(0, 0, 0);
+                    console.log("----MODEL 2 ----");
+                    model.receiveShadow = true;
+                    model.castShadow = true;
 
                     setBoundBox(model);
                     setPolarGrid(model);

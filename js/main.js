@@ -3,13 +3,13 @@ var container = document.getElementById('container'),
 
 if (!Detector.webgl) Detector.addGetWebGLMessage();
 
-var camera, camerHelper, scene, renderer, loader,
+var camera, camerHelper, scene, renderer, loader, light,
     stats, controls, transformControls, numOfMeshes = 0, model, modelDuplicate, sample_model, wireframe, mat, scale, delta;
 
 const manager = new THREE.LoadingManager();
 
 var modelLoaded = false, sample_model_loaded = false;
-var modelWithTextures = false, fbxLoaded = false, gltfLoaded = false;;
+var modelWithTextures = false, fbxLoaded = false, gltfLoaded = false;
 var bg_Texture = false;
 
 var glow_value, selectedObject, composer, effectFXAA, position, outlinePass, ssaaRenderPass;
@@ -94,6 +94,25 @@ function initScene(index) {
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setClearColor(0x292121); //565646, 29212
 
+
+    // enabling shadows
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+
+    // plane geometry
+    const geometryP = new THREE.PlaneGeometry(100, 100);
+    const materialP = new THREE.MeshStandardMaterial({color:0xffffff})
+    const plane = new THREE.Mesh(geometryP, materialP);
+    plane.castShadow = true;
+    plane.receiveShadow = true;
+    plane.rotation.x = -Math.PI / 2;
+    scene.add(plane);
+
+
+
+
+
     view.appendChild(renderer.domElement);
 
     THREEx.WindowResize(renderer, camera);
@@ -136,23 +155,59 @@ function initScene(index) {
         }
     });
 
+
+    // light
+    var near = 0.1;
+    var far = 1000;
+    var fov = 90;
+    var light = new THREE.DirectionalLight(0xffffff);
+    light.position.set(0,5,5);
+    light.target.position.set(0,0,0);
+    light.shadow.camera.near = near;
+    light.shadow.camera.far = far;
+    // light.shadow.camera.left = -15;
+    // light.shadow.camera.bottom = -15;
+    // light.shadow.camera.right = 15;
+    // light.shadow.camera.top	= 15;
+    light.castShadow = true;
+    light.shadow.mapSize.width = 2048;
+    light.shadow.mapSize.height = 2048;
+    scene.add(light);
+
+
+    var floor_geometry = new THREE.PlaneGeometry(1000,1000);
+    var floor_material = new THREE.MeshPhongMaterial({color: 0xffffff});
+    var floor = new THREE.Mesh(floor_geometry,floor_material);
+    floor.position.set(0,-2,0);
+    floor.rotation.x -= Math.PI/2;
+    floor.receiveShadow = true;
+    floor.castShadow = false;
+    scene.add(floor);
+
     /*LIGHTS*/
     directionalLight = new THREE.DirectionalLight(0xffeedd);
+    directionalLight.castShadow = true;
     directionalLight.position.set(0, 0, 1).normalize();
+
     scene.add(directionalLight);
 
     directionalLight2 = new THREE.DirectionalLight(0xffeedd);
+    directionalLight2.castShadow = true;
     directionalLight2.position.set(0, 0, -1).normalize();
     scene.add(directionalLight2);
 
     directionalLight3 = new THREE.DirectionalLight(0xffeedd);
+    directionalLight3.castShadow = true;
     directionalLight3.position.set(0, 1, 0).normalize();
     scene.add(directionalLight3);
 
     var ambientLight = new THREE.AmbientLight(0x808080, 0.2); //Grey colour, low intensity
-    scene.add(ambientLight);
+
+    //scene.add(ambientLight);
 
     pointLight = new THREE.PointLight(0xcccccc, 0.5);
+    pointLight.position.set(100, 100, 100).normalize();
+    pointLight.castShadow = true;
     camera.add(pointLight);
 
     scene.add(camera);
@@ -250,20 +305,24 @@ function initScene(index) {
         sample_model_loaded = true;
 
         console.log(sample_model);
-
         sample_model.traverse(function (child) {
+            if (child.isMesh) {
+                child.castShadow = true;
+            }
+
             if (child instanceof THREE.Mesh) {
 
                 numOfMeshes++;
                 var geometry = child.geometry;
                 stats(sceneInfo.name, geometry, numOfMeshes);
-                
+
                 child.material = materials.default_material;
 
                 var wireframe2 = new THREE.WireframeGeometry(child.geometry);
                 var edges = new THREE.LineSegments(wireframe2, materials.wireframeAndModel);
                 materials.wireframeAndModel.visible = false;
                 sample_model.add(edges);
+
 
                 setWireFrame(child);
                 setWireframeAndModel(child);
@@ -291,7 +350,6 @@ function initScene(index) {
         outlinePass.enabled = false;
 
         scene.add(sample_model);
-
     }, onProgress, onError);
 
 
@@ -340,7 +398,7 @@ function removeModel() {
     model_wire.checked = false; phong.checked = false; xray.checked = false;
     glow.checked = false; grid.checked = false; polar_grid.checked = false;
     axis.checked = false; bBox.checked = false; smooth.checked = false; canvasSize.checked = false;
-    transform.checked = false, smooth.disabled = false; //Uncheck any checked boxes
+    transform.checked = false; smooth.disabled = false; //Uncheck any checked boxes
     
     transformControls.detach(scene);
 
