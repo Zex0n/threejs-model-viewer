@@ -105,6 +105,8 @@ var loadFile = function (file) {
                     setPhong(child);
                     setXray(child);
 
+                    child.castShadow = true;
+
                 }
             });
                 
@@ -184,7 +186,9 @@ var loadFile = function (file) {
                         setWireframeAndModel(child);
 
                         setPhong(child);
-                        setXray(child); 
+                        setXray(child);
+
+                        child.castShadow = true;
 
                     }
                 });
@@ -330,6 +334,8 @@ var loadFile = function (file) {
                         //child.material = materials.default_material3;
                         setPhong(child, originalMaterial);
                         setXray(child, originalMaterial);
+
+                        child.castShadow = true;
                     }
                     
                 });
@@ -415,6 +421,8 @@ var loadFile = function (file) {
                             console.log(originalMaterial);
                             setPhong(child, originalMaterial);
                             setXray(child, originalMaterial);
+
+                            child.castShadow = true;
                         }
                         
                     });

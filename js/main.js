@@ -101,13 +101,13 @@ function initScene(index) {
 
 
     // plane geometry
-    const geometryP = new THREE.PlaneGeometry(100, 100);
+/*    const geometryP = new THREE.PlaneGeometry(100, 100);
     const materialP = new THREE.MeshStandardMaterial({color:0xffffff})
     const plane = new THREE.Mesh(geometryP, materialP);
     plane.castShadow = true;
     plane.receiveShadow = true;
     plane.rotation.x = -Math.PI / 2;
-    scene.add(plane);
+    scene.add(plane);*/
 
 
 
@@ -160,15 +160,15 @@ function initScene(index) {
     var near = 0.1;
     var far = 1000;
     var fov = 90;
-    var light = new THREE.DirectionalLight(0xffffff);
+    var light = new THREE.DirectionalLight(0xffffff, 0.5);
     light.position.set(0,5,5);
     light.target.position.set(0,0,0);
     light.shadow.camera.near = near;
     light.shadow.camera.far = far;
-    // light.shadow.camera.left = -15;
-    // light.shadow.camera.bottom = -15;
-    // light.shadow.camera.right = 15;
-    // light.shadow.camera.top	= 15;
+    light.shadow.camera.left = -150;
+    light.shadow.camera.bottom = -150;
+    light.shadow.camera.right = 150;
+    light.shadow.camera.top	= 150;
     light.castShadow = true;
     light.shadow.mapSize.width = 2048;
     light.shadow.mapSize.height = 2048;
@@ -176,9 +176,16 @@ function initScene(index) {
 
 
     var floor_geometry = new THREE.PlaneGeometry(1000,1000);
-    var floor_material = new THREE.MeshPhongMaterial({color: 0xffffff});
+    //var floor_material = new THREE.MeshPhongMaterial({color: 0xffffff, shininess: 0 });
+    var floor_material = new THREE.MeshPhongMaterial({
+        color: 0xffffff,
+        side: THREE.DoubleSide,
+        shadowSide: THREE.BackSide,
+        shininess: 0
+    });
+
     var floor = new THREE.Mesh(floor_geometry,floor_material);
-    floor.position.set(0,-2,0);
+    floor.position.set(0,0,0);
     floor.rotation.x -= Math.PI/2;
     floor.receiveShadow = true;
     floor.castShadow = false;
@@ -186,20 +193,18 @@ function initScene(index) {
 
     /*LIGHTS*/
     directionalLight = new THREE.DirectionalLight(0xffeedd);
-    directionalLight.castShadow = true;
     directionalLight.position.set(0, 0, 1).normalize();
 
     scene.add(directionalLight);
 
     directionalLight2 = new THREE.DirectionalLight(0xffeedd);
-    directionalLight2.castShadow = true;
     directionalLight2.position.set(0, 0, -1).normalize();
-    scene.add(directionalLight2);
+    //scene.add(directionalLight2);
 
     directionalLight3 = new THREE.DirectionalLight(0xffeedd);
-    directionalLight3.castShadow = true;
+    //directionalLight3.castShadow = true;
     directionalLight3.position.set(0, 1, 0).normalize();
-    scene.add(directionalLight3);
+    //scene.add(directionalLight3);
 
     var ambientLight = new THREE.AmbientLight(0x808080, 0.2); //Grey colour, low intensity
 
@@ -207,7 +212,7 @@ function initScene(index) {
 
     pointLight = new THREE.PointLight(0xcccccc, 0.5);
     pointLight.position.set(100, 100, 100).normalize();
-    pointLight.castShadow = true;
+    //pointLight.castShadow = true;
     camera.add(pointLight);
 
     scene.add(camera);
