@@ -157,34 +157,40 @@ function initScene(index) {
 
 
     // light
-    var near = 0.1;
-    var far = 1000;
-    var fov = 90;
+    let near = 0.1, far = 1000, fov = 90, side = 150;
+
     var light = new THREE.DirectionalLight(0xffffff, 0.5);
     light.position.set(0,5,5);
     light.target.position.set(0,0,0);
     light.shadow.camera.near = near;
     light.shadow.camera.far = far;
-    light.shadow.camera.left = -150;
+/*    light.shadow.camera.left = -150;
     light.shadow.camera.bottom = -150;
     light.shadow.camera.right = 150;
-    light.shadow.camera.top	= 150;
+    light.shadow.camera.top	= 150;*/
+    light.shadow.camera.top = side;
+    light.shadow.camera.bottom = -side;
+    light.shadow.camera.left = side;
+    light.shadow.camera.right = -side;
     light.castShadow = true;
     light.shadow.mapSize.width = 2048;
     light.shadow.mapSize.height = 2048;
     scene.add(light);
 
+    var shadowHelper = new THREE.CameraHelper( light.shadow.camera );
+    scene.add( shadowHelper );
 
-    var floor_geometry = new THREE.PlaneGeometry(1000,1000);
+
+    let floor_geometry = new THREE.PlaneGeometry(1000,1000);
     //var floor_material = new THREE.MeshPhongMaterial({color: 0xffffff, shininess: 0 });
-    var floor_material = new THREE.MeshPhongMaterial({
+    let floor_material = new THREE.MeshPhongMaterial({
         color: 0xffffff,
         side: THREE.DoubleSide,
         shadowSide: THREE.BackSide,
         shininess: 0
     });
 
-    var floor = new THREE.Mesh(floor_geometry,floor_material);
+    let floor = new THREE.Mesh(floor_geometry,floor_material);
     floor.position.set(0,0,0);
     floor.rotation.x -= Math.PI/2;
     floor.receiveShadow = true;

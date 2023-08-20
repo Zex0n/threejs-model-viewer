@@ -56,6 +56,12 @@ body {
     margin-bottom: 10px;
 }
 
+.light_input {
+    width: 15%;
+    margin: 5px 5px 10px 5px;
+    float: left;
+}
+
 #anims {
     position: absolute;
     right: 10px;
