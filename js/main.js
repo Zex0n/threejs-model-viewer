@@ -16,6 +16,7 @@ var glow_value, selectedObject, composer, effectFXAA, position, outlinePass, ssa
 var clock = new THREE.Clock();
 
 var ambient, directionalLight, directionalLight2, directionalLight3, pointLight, bg_colour, shadowLight;
+var directionalLights = [];
 var backgroundScene, backgroundCamera, backgroundMesh;
 
 var amb = document.getElementById('ambient_light'),
@@ -159,25 +160,9 @@ function initScene(index) {
 
 
     // shadowLight
-    let near = 0.1, far = 1000, fov = 90, side = 150;
 
-    let shadowLight = new THREE.DirectionalLight(0xffffff, 0.5);
-    shadowLight.position.set(0,5,5);
-    shadowLight.target.position.set(0,0,0);
-    shadowLight.shadow.camera.near = near;
-    shadowLight.shadow.camera.far = far;
-/*    shadowLight.shadow.camera.left = -150;
-    shadowLight.shadow.camera.bottom = -150;
-    shadowLight.shadow.camera.right = 150;
-    shadowLight.shadow.camera.top	= 150;*/
-    shadowLight.shadow.camera.top = side;
-    shadowLight.shadow.camera.bottom = -side;
-    shadowLight.shadow.camera.left = side;
-    shadowLight.shadow.camera.right = -side;
-    shadowLight.castShadow = true;
-    shadowLight.shadow.mapSize.width = 2048;
-    shadowLight.shadow.mapSize.height = 2048;
-    scene.add(shadowLight);
+
+
 
     let floor_geometry = new THREE.PlaneGeometry(1000,1000);
     //var floor_material = new THREE.MeshPhongMaterial({color: 0xffffff, shininess: 0 });
@@ -196,28 +181,48 @@ function initScene(index) {
     scene.add(floor);
 
     /*LIGHTS*/
-    directionalLight = new THREE.DirectionalLight(0xffeedd);
+    directionalLights[0] = new lightObject("DirectionalLight", 0xffeedd, 1, false);
+    directionalLights[0].setPosition(0, 0, 1);
+
+    directionalLights[1] = new lightObject("DirectionalLight", 0xffeedd, 1, false);
+    directionalLights[1].setPosition(0, 0, -1);
+
+    directionalLights[2] = new lightObject("DirectionalLight", 0xffeedd, 1, false);
+    directionalLights[2].setPosition(0, 1, 0);
+
+    directionalLights[3] = new lightObject("PointLight", 0xcccccc, 0.5, false);
+    directionalLights[3].setPosition(100, 100, 100);
+    pointLight = directionalLights[3].getLight();
+
+    // directionalLights[4] = new lightObject("AmbientLight", 0x808080, 0.2, false); // (0xcccccc, 0.5
+    // directionalLights[4].setPosition(100, 100, 100);
+
+    for (let i=0; i<directionalLights.length; i++) {
+        scene.add(directionalLights[i].getLight());
+    }
+
+
+/*    directionalLight = new THREE.DirectionalLight(0xffeedd);
     directionalLight.position.set(0, 0, 1).normalize();
+    scene.add(directionalLight); //!*/
 
-    scene.add(directionalLight);
 
-    directionalLight2 = new THREE.DirectionalLight(0xffeedd);
+/*    directionalLight2 = new THREE.DirectionalLight(0xffeedd);
     directionalLight2.position.set(0, 0, -1).normalize();
-    //scene.add(directionalLight2);
+    scene.add(directionalLight2);*/
 
-    directionalLight3 = new THREE.DirectionalLight(0xffeedd);
+/*    directionalLight3 = new THREE.DirectionalLight(0xffeedd);
     //directionalLight3.castShadow = true;
     directionalLight3.position.set(0, 1, 0).normalize();
-    //scene.add(directionalLight3);
+    scene.add(directionalLight3);*/
 
     var ambientLight = new THREE.AmbientLight(0x808080, 0.2); //Grey colour, low intensity
 
     //scene.add(ambientLight);
 
-    pointLight = new THREE.PointLight(0xcccccc, 0.5);
+/*    pointLight = new THREE.PointLight(0xcccccc, 0.5);
     pointLight.position.set(100, 100, 100).normalize();
-    //pointLight.castShadow = true;
-    camera.add(pointLight);
+    camera.add(pointLight);*/
 
     scene.add(camera);
 
@@ -476,14 +481,17 @@ $('#rotation').change(function () {
 
 function setColours() {
 
-    var colour = getColours($('#red').slider("value"), $('#green').slider("value"), $('#blue').slider("value"));
-    directionalLight.color.setRGB(colour[0], colour[1], colour[2]);
-    directionalLight2.color.setRGB(colour[0], colour[1], colour[2]);
-    directionalLight3.color.setRGB(colour[0], colour[1], colour[2]);
+    let colour = getColours($('#red').slider("value"), $('#green').slider("value"), $('#blue').slider("value"));
+    for (let li=0; li<directionalLights.length; li++) {
+        directionalLights[li].getLight().color.setRGB(colour[0], colour[1], colour[2]);
+    }
 
-    var colour = getColours($('#ambient_red').slider("value"), $('#ambient_green').slider("value"),
+    //directionalLight2.color.setRGB(colour[0], colour[1], colour[2]);
+    //directionalLight3.color.setRGB(colour[0], colour[1], colour[2]);
+
+    let colour_amb = getColours($('#ambient_red').slider("value"), $('#ambient_green').slider("value"),
                             $('#ambient_blue').slider("value"));
-    ambient.color.setRGB(colour[0], colour[1], colour[2]);
+    ambient.color.setRGB(colour_amb[0], colour_amb[1], colour_amb[2]);
 
 }
 

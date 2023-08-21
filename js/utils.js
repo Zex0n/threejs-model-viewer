@@ -618,7 +618,7 @@ class saveSprites {
         }
     }
 
-  /**
+   /**
    * Sets the animation to an exact point.
    * @param percentage - A number from 0 to 1, where 0 is 0% and 1 is 100%.
    */
@@ -735,6 +735,67 @@ class saveSprites {
        });
     }
 }
+
+class lightObject {
+    light_value;
+
+    constructor(light_type, color, intensity, castShadow) {
+        this._near = 0.1;
+        this._far = 1000;
+        this._fov = 90;
+        this._side = 150;
+        this._cast_shadow = castShadow;
+        this._light_type = light_type;
+
+        this.setLight (color, intensity);
+        //this.setPosition(0,5,5);
+
+        // if (this._light_type !== "PointLight")
+        //     this.setTargetPosition(0,0,0);
+    }
+
+    getLight() {
+        return this.light_value;
+    }
+
+    setLight (color, intensity) {
+        //shadowLight = new THREE.DirectionalLight(0xffffff, 0.5);
+        if (this._light_type === "DirectionalLight")
+            this.light_value = new THREE.DirectionalLight(color, intensity);
+        else if (this._light_type === "PointLight")
+            this.light_value = new THREE.PointLight(color, intensity);
+        else if (this._light_type === "AmbientLight")
+            this.light_value = new THREE.AmbientLight(color, intensity);
+
+        // shadowLight.position.set(0,5,5);
+        // shadowLight.target.position.set(0,0,0);
+        if (this._cast_shadow) {
+            if (this._light_type !== "PointLight")
+                this.setTargetPosition(0,0,0);
+            this.setShadowParams();
+        }
+    }
+
+    setPosition (x, y, z) {
+        this.light_value.position.set(x,y,z).normalize();
+    }
+
+    setTargetPosition (x, y, z) {
+        this.light_value.target.position.set(x,y,z);
+    }
+
+    setShadowParams () {
+        this.light_value.shadow.camera.near = this._near;
+        this.light_value.shadow.camera.far = this._far;
+        this.light_value.shadow.camera.top = this._side;
+        this.light_value.shadow.camera.bottom = -this._side;
+        this.light_value.shadow.camera.left = this._side;
+        this.light_value.shadow.camera.right = -this._side;
+        this.light_value.castShadow = this._cast_shadow;
+        this.light_value.shadow.mapSize.width = 2048;
+        this.light_value.shadow.mapSize.height = 2048;
+    }
+}
 $(document).ready(function() {
     save_sprites = new saveSprites(mixer, model);
 
@@ -769,17 +830,35 @@ $(document).ready(function() {
     // Drop Shadow block
 
     $('#drop_shadow').change(function() {
+        let near = 0.1, far = 1000, fov = 90, side = 150;
         console.log("drop_shadow");
-        if (shadowLight === undefined) {
-            shadowLight = new THREE.CameraHelper( light.shadow.camera );
-            scene.add( shadowLight );
-        }
+
         console.log(shadowLight);
 
         if (dropShadow.checked) {
-
+            if (shadowLight === undefined) {
+                shadowLight = new THREE.DirectionalLight(0xffffff, 0.5);
+                shadowLight.position.set(0,5,5);
+                shadowLight.target.position.set(0,0,0);
+                shadowLight.shadow.camera.near = near;
+                shadowLight.shadow.camera.far = far;
+                shadowLight.shadow.camera.top = side;
+                shadowLight.shadow.camera.bottom = -side;
+                shadowLight.shadow.camera.left = side;
+                shadowLight.shadow.camera.right = -side;
+                shadowLight.castShadow = true;
+                shadowLight.shadow.mapSize.width = 2048;
+                shadowLight.shadow.mapSize.height = 2048;
+                scene.add(shadowLight);
+            } else {
+                shadowLight.visible = true;
+            }
+            directionalLight2.visible = false;
+            directionalLight3.visible = false;
         } else {
-
+            shadowLight.visible = false;
+            directionalLight2.visible = true;
+            directionalLight3.visible = true;
         }
     });
     $('#drop_shadow_light_helper').change(function() {
