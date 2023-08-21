@@ -181,22 +181,68 @@
                             <li><span style="font-size: 12px">Intensity Value</span></li>
                             <li><div id="point_light"></div></li>
                         <li><hr style="margin-top:15px"/></li>
+
+                    </ul>                   
+                </li>
+
+
+                <li class='dropdown'>
+                    <a href='#'><img src="images/wireframe_cube.png" class="image" />Shadow</a>
+                    <ul>
                         <li><span>Drop Shadow</span></li>
+                        <li>
+                            <label class="switch">
+                                <input class="check" type="checkbox" id="drop_shadow">
+                                <span class="toggle round"></span>
+                            </label>
+                        </li>
+
+                        <li><span style="font-size: 12px">Show Light Area Helper</span></li>
+                        <li>
+                            <label class="switch">
+                                <input class="check" type="checkbox" id="drop_shadow_light_helper">
+                                <span class="toggle round"></span>
+                            </label>
+                        </li>
+
                         <li><span style="font-size: 12px">Light Position</span></li>
                         <li>
                             <input type='number' id="light_x" class="light_input" placeholder="X" />
                             <input type='number' id="light_y" class="light_input" placeholder="Y" />
                             <input type='number' id="light_z" class="light_input" placeholder="Z" />
                         </li>
-                        <br clear="all">
+                        <div style='clear:both'></div>
                         <li><span style="font-size: 12px">Light Area Size</span></li>
                         <li>
                             <input type='number' id="light_area_size" class="light_input" />
                         </li>
-                        <br clear="all">
-                    </ul>                   
-                </li>
+                        <div style='clear:both'></div>
 
+                        <li><hr style="margin-top:15px"/></li>
+                        <li><span style="font-size: 12px">Show Plane</span></li>
+                        <li>
+                            <label class="switch">
+                                <input class="check" type="checkbox" id="drop_shadow_show_plane">
+                                <span class="toggle round"></span>
+                            </label>
+                        </li>
+
+                        <li><span style="font-size: 12px">Plane Position</span></li>
+                        <li>
+                            <input type='number' id="plane_x" class="light_input" placeholder="X" />
+                            <input type='number' id="plane_y" class="light_input" placeholder="Y" />
+                            <input type='number' id="plane_z" class="light_input" placeholder="Z" />
+                        </li>
+                        <div style='clear:both'></div>
+
+                        <li><span style="font-size: 12px">Plane Size</span></li>
+                        <li>
+                            <input type='number' id="plane_size_w" class="light_input" placeholder="Width" />
+                            <input type='number' id="plane_size_h" class="light_input" placeholder="Height" />
+                        </li>
+                        <div style='clear:both'></div>
+                    </ul>
+                </li>
 
                 <li class='dropdown'>
                     <a href='#'><img src="images/wireframe_cube.png" class="image" />Wireframe View</a>

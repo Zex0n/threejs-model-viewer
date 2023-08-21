@@ -765,6 +765,35 @@ $(document).ready(function() {
         }
         camera.updateProjectionMatrix();
     });
+
+    // Drop Shadow block
+
+    $('#drop_shadow').change(function() {
+        console.log("drop_shadow");
+        if (shadowLight === undefined) {
+            shadowLight = new THREE.CameraHelper( light.shadow.camera );
+            scene.add( shadowLight );
+        }
+        console.log(shadowLight);
+
+        if (dropShadow.checked) {
+
+        } else {
+
+        }
+    });
+    $('#drop_shadow_light_helper').change(function() {
+        console.log("drop_shadow_light_helper");
+        let shadowHelper = new THREE.CameraHelper( light.shadow.camera );
+        scene.add( shadowHelper );
+        console.log(shadowHelper);
+
+        if (dropShadowLightHelper.checked) {
+
+        } else {
+
+        }
+    });
 });
 
 // document.getElementById("save_sprite").onclick = saveSprite;

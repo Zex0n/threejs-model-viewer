@@ -15,7 +15,7 @@ var bg_Texture = false;
 var glow_value, selectedObject, composer, effectFXAA, position, outlinePass, ssaaRenderPass;
 var clock = new THREE.Clock();
 
-var ambient, directionalLight, directionalLight2, directionalLight3, pointLight, bg_colour;
+var ambient, directionalLight, directionalLight2, directionalLight3, pointLight, bg_colour, shadowLight;
 var backgroundScene, backgroundCamera, backgroundMesh;
 
 var amb = document.getElementById('ambient_light'),
@@ -34,6 +34,8 @@ var amb = document.getElementById('ambient_light'),
     statsNode = document.getElementById('stats'),
     saveAsSprite = document.getElementById('save_as_sprite'),
     canvasSize = document.getElementById('canvas_size');
+    dropShadowLightHelper = document.getElementById('drop_shadow_light_helper');
+    dropShadow = document.getElementById('drop_shadow');
 
 //ANIMATION GLOBALS
 var animations = {}, animationsSelect = document.getElementById("animationSelect"),
@@ -47,7 +49,7 @@ var materials = {
     default_material2: new THREE.MeshLambertMaterial({ side: THREE.DoubleSide }),
     wireframeMaterial: new THREE.MeshPhongMaterial({
         side: THREE.DoubleSide,
-        wireframe: true, 
+        wireframe: true,
         shininess: 100,
         specular: 0x000, emissive: 0x000,
         flatShading: false, depthWrite: true, depthTest: true
@@ -144,7 +146,7 @@ function initScene(index) {
     document.getElementById('fullscreenBtn').addEventListener('click', function () {
         toggleFullscreen();
     });
-  
+
     ambient = new THREE.AmbientLight(0x404040);
     $('#ambient_light').change(function () {
         if (amb.checked) {
@@ -156,37 +158,33 @@ function initScene(index) {
     });
 
 
-    // light
+    // shadowLight
     let near = 0.1, far = 1000, fov = 90, side = 150;
 
-    var light = new THREE.DirectionalLight(0xffffff, 0.5);
-    light.position.set(0,5,5);
-    light.target.position.set(0,0,0);
-    light.shadow.camera.near = near;
-    light.shadow.camera.far = far;
-/*    light.shadow.camera.left = -150;
-    light.shadow.camera.bottom = -150;
-    light.shadow.camera.right = 150;
-    light.shadow.camera.top	= 150;*/
-    light.shadow.camera.top = side;
-    light.shadow.camera.bottom = -side;
-    light.shadow.camera.left = side;
-    light.shadow.camera.right = -side;
-    light.castShadow = true;
-    light.shadow.mapSize.width = 2048;
-    light.shadow.mapSize.height = 2048;
-    scene.add(light);
-
-    var shadowHelper = new THREE.CameraHelper( light.shadow.camera );
-    scene.add( shadowHelper );
-
+    let shadowLight = new THREE.DirectionalLight(0xffffff, 0.5);
+    shadowLight.position.set(0,5,5);
+    shadowLight.target.position.set(0,0,0);
+    shadowLight.shadow.camera.near = near;
+    shadowLight.shadow.camera.far = far;
+/*    shadowLight.shadow.camera.left = -150;
+    shadowLight.shadow.camera.bottom = -150;
+    shadowLight.shadow.camera.right = 150;
+    shadowLight.shadow.camera.top	= 150;*/
+    shadowLight.shadow.camera.top = side;
+    shadowLight.shadow.camera.bottom = -side;
+    shadowLight.shadow.camera.left = side;
+    shadowLight.shadow.camera.right = -side;
+    shadowLight.castShadow = true;
+    shadowLight.shadow.mapSize.width = 2048;
+    shadowLight.shadow.mapSize.height = 2048;
+    scene.add(shadowLight);
 
     let floor_geometry = new THREE.PlaneGeometry(1000,1000);
     //var floor_material = new THREE.MeshPhongMaterial({color: 0xffffff, shininess: 0 });
     let floor_material = new THREE.MeshPhongMaterial({
         color: 0xffffff,
         side: THREE.DoubleSide,
-        shadowSide: THREE.BackSide,
+        shadowSide: THREE.DoubleSide,
         shininess: 0
     });
 
@@ -222,7 +220,7 @@ function initScene(index) {
     camera.add(pointLight);
 
     scene.add(camera);
-    
+
     controls = new THREE.OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
     controls.dampingFactor = 0.09;
@@ -266,11 +264,11 @@ function initScene(index) {
             var bg_value = $(".bg_select").spectrum('get').toHexString(); //Get the colour selected
             renderer.setClearColor(bg_value); //Set renderer colour to the selected hex value
             ssaaRenderPass.clearColor = bg_value;
-            document.body.style.background = bg_value; //Set body of document to selected colour           
+            document.body.style.background = bg_value; //Set body of document to selected colour
         }
     });
 
-    // postprocessing    
+    // postprocessing
     var renderPass = new THREE.RenderPass( scene, camera );
 
     var fxaaPass = new THREE.ShaderPass( THREE.FXAAShader );
@@ -280,15 +278,15 @@ function initScene(index) {
     fxaaPass.material.uniforms[ 'resolution' ].value.y = 1 / ( window.innerHeight * pixelRatio );
     fxaaPass.renderToScreen = true;
 
-    outlinePass = new THREE.OutlinePass(new THREE.Vector2(window.innerWidth, window.innerHeight), scene, camera);   
-    outlinePass.edgeStrength = 1.5; 
+    outlinePass = new THREE.OutlinePass(new THREE.Vector2(window.innerWidth, window.innerHeight), scene, camera);
+    outlinePass.edgeStrength = 1.5;
     outlinePass.edgeGlow = 2;
 
     composer = new THREE.EffectComposer( renderer );
     composer.addPass( renderPass );
     composer.addPass(outlinePass);
     composer.addPass( fxaaPass );
-    
+
     /*LOAD SAMPLE MODELS*/
     var sceneInfo = modelList[index]; //index from array of sample models in html select options
     loader = new THREE.OBJLoader(manager);
@@ -365,7 +363,7 @@ function initScene(index) {
 
 
     $('#transform').on('change', function () {
-        
+
         if (transform.checked) {
             document.getElementById('transformKey').style.display = 'block';
             if (modelLoaded) {
@@ -374,7 +372,7 @@ function initScene(index) {
             else if(sample_model_loaded) {
                 transformControls.attach(sample_model);
             }
-            
+
         } else {
             document.getElementById('transformKey').style.display = 'none';
             transformControls.detach(scene);
@@ -391,11 +389,11 @@ function removeModel() {
     modelWithTextures = false;
     fbxLoaded = false;
     gltfLoaded = false;
-    
+
     if (ambient) {
         scene.remove(ambient);
     }
-    
+
     $('#point_light').slider("value", 0.5);
     pointLight.intensity = 0.5;
 
@@ -409,8 +407,10 @@ function removeModel() {
     model_wire.checked = false; phong.checked = false; xray.checked = false;
     glow.checked = false; grid.checked = false; polar_grid.checked = false;
     axis.checked = false; bBox.checked = false; smooth.checked = false; canvasSize.checked = false;
+    dropShadow.checked = false;
+    dropShadowLightHelper.checked = false;
     transform.checked = false; smooth.disabled = false; //Uncheck any checked boxes
-    
+
     transformControls.detach(scene);
 
     document.getElementById('smooth-model').innerHTML = "Smooth Model";
@@ -422,7 +422,7 @@ function removeModel() {
     $('#shine').slider("value", 10); //Set phong shine level back to initial
 
     $('input[name="rotate"]').prop('checked', false); //uncheck rotate x, y or z checkboxes
-    
+
     animsDiv.style.display = "none"; //Hide animation <div>
 }
 
@@ -503,12 +503,12 @@ function animate() {
 
     delta = clock.getDelta();
     requestAnimationFrame(animate);
-    
+
     if (mixer) {
         mixer.update(delta);
     }
     controls.update(delta);
-    
+
     composer.render();
     render();
 
@@ -523,7 +523,7 @@ var modelList = [
             {
                 name: "car.obj", url: 'sample_models/car2.obj'
                 //, objectRotation: new THREE.Euler(0, 3 * Math.PI / 2, 0)
-                        
+
             },
             {
                 name: "tiger.obj", url: 'sample_models/Tiger.obj'
