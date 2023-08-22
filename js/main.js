@@ -1,25 +1,25 @@
-var container = document.getElementById('container'),
+let container = document.getElementById('container'),
     view = document.getElementById('main_viewer');
 
 if (!Detector.webgl) Detector.addGetWebGLMessage();
 
-var camera, camerHelper, scene, renderer, loader, light,
-    stats, controls, transformControls, numOfMeshes = 0, model, modelDuplicate, sample_model, wireframe, mat, scale, delta;
+let camera, camerHelper, scene, renderer, loader, light, floorPlane,
+    controls, transformControls, numOfMeshes = 0, model, modelDuplicate, sample_model, wireframe, mat, scale, delta;
 
 const manager = new THREE.LoadingManager();
 
-var modelLoaded = false, sample_model_loaded = false;
-var modelWithTextures = false, fbxLoaded = false, gltfLoaded = false;
-var bg_Texture = false;
+let modelLoaded = false, sample_model_loaded = false;
+let modelWithTextures = false, fbxLoaded = false, gltfLoaded = false;
+let bg_Texture = false;
 
-var glow_value, selectedObject, composer, effectFXAA, position, outlinePass, ssaaRenderPass;
-var clock = new THREE.Clock();
+let glow_value, selectedObject, composer, effectFXAA, position, outlinePass, ssaaRenderPass;
+let clock = new THREE.Clock();
 
-var ambient, directionalLight, directionalLight2, directionalLight3, pointLight, bg_colour, shadowLight;
-var directionalLights = [];
-var backgroundScene, backgroundCamera, backgroundMesh;
+let ambient, directionalLight, directionalLight2, directionalLight3, pointLight, bg_colour, shadowLight;
+let directionalLights = [];
+let backgroundScene, backgroundCamera, backgroundMesh;
 
-var amb = document.getElementById('ambient_light'),
+let amb = document.getElementById('ambient_light'),
     rot1 = document.getElementById('rotation'),
     wire = document.getElementById('wire_check'),
     model_wire = document.getElementById('model_wire'),
@@ -39,13 +39,13 @@ var amb = document.getElementById('ambient_light'),
     dropShadow = document.getElementById('drop_shadow');
 
 //ANIMATION GLOBALS
-var animations = {}, animationsSelect = document.getElementById("animationSelect"),
+let animations = {}, animationsSelect = document.getElementById("animationSelect"),
     animsDiv = document.getElementById("anims"), mixer, currentAnimation, actions = {},
     save_sprites;
 
 //X-RAY SHADER MATERIAL
 //http://free-tutorials.org/shader-x-ray-effect-with-three-js/
-var materials = {
+let materials = {
     default_material: new THREE.MeshLambertMaterial({ side: THREE.DoubleSide }),
     default_material2: new THREE.MeshLambertMaterial({ side: THREE.DoubleSide }),
     wireframeMaterial: new THREE.MeshPhongMaterial({
@@ -73,8 +73,8 @@ var materials = {
     })
 };
 
-var clock = new THREE.Clock();
-var winDims = [window.innerWidth * 0.8, window.innerHeight * 0.89]; //size of renderer
+//let clock = new THREE.Clock();
+let winDims = [window.innerWidth * 0.8, window.innerHeight * 0.89]; //size of renderer
 
 function onload() {
 
@@ -165,20 +165,21 @@ function initScene(index) {
 
 
     let floor_geometry = new THREE.PlaneGeometry(1000,1000);
-    //var floor_material = new THREE.MeshPhongMaterial({color: 0xffffff, shininess: 0 });
-    let floor_material = new THREE.MeshPhongMaterial({
-        color: 0xffffff,
-        side: THREE.DoubleSide,
-        shadowSide: THREE.DoubleSide,
-        shininess: 0
+    //let floor_material = new THREE.MeshPhongMaterial({color: 0xffffff, shininess: 0 });
+    let floor_material = new THREE.ShadowMaterial({
+        opacity: 0.5
+        // color: 0xffffff,
+        // side: THREE.DoubleSide,
+        // shadowSide: THREE.DoubleSide,
+        // shininess: 0
     });
 
-    let floor = new THREE.Mesh(floor_geometry,floor_material);
-    floor.position.set(0,0,0);
-    floor.rotation.x -= Math.PI/2;
-    floor.receiveShadow = true;
-    floor.castShadow = false;
-    scene.add(floor);
+    floorPlane = new THREE.Mesh(floor_geometry,floor_material);
+    floorPlane.position.set(0,0,0);
+    floorPlane.rotation.x -= Math.PI/2;
+    floorPlane.receiveShadow = true;
+    floorPlane.castShadow = false;
+    scene.add(floorPlane);
 
     /*LIGHTS*/
     directionalLights[0] = new lightObject("DirectionalLight", 0xffeedd, 1, false);
@@ -190,9 +191,7 @@ function initScene(index) {
     directionalLights[2] = new lightObject("DirectionalLight", 0xffeedd, 1, false);
     directionalLights[2].setPosition(0, 1, 0);
 
-    directionalLights[3] = new lightObject("PointLight", 0xcccccc, 0.5, false);
-    directionalLights[3].setPosition(100, 100, 100);
-    pointLight = directionalLights[3].getLight();
+
 
     // directionalLights[4] = new lightObject("AmbientLight", 0x808080, 0.2, false); // (0xcccccc, 0.5
     // directionalLights[4].setPosition(100, 100, 100);
@@ -216,14 +215,16 @@ function initScene(index) {
     directionalLight3.position.set(0, 1, 0).normalize();
     scene.add(directionalLight3);*/
 
-    var ambientLight = new THREE.AmbientLight(0x808080, 0.2); //Grey colour, low intensity
+    let ambientLight = new THREE.AmbientLight(0x808080, 0.2); //Grey colour, low intensity
 
     //scene.add(ambientLight);
 
 /*    pointLight = new THREE.PointLight(0xcccccc, 0.5);
-    pointLight.position.set(100, 100, 100).normalize();
-    camera.add(pointLight);*/
-
+    pointLight.position.set(100, 100, 100).normalize();*/
+    let pl = new lightObject("PointLight", 0xcccccc, 0.5, false);
+    pl.setPosition(100, 100, 100);
+    pointLight = pl.getLight();
+    camera.add(pointLight);
     scene.add(camera);
 
     controls = new THREE.OrbitControls(camera, renderer.domElement);
@@ -266,7 +267,7 @@ function initScene(index) {
         color: "#fff",
         change: function (color) {
             $("#basic_log").text("Hex Colour Selected: " + color.toHexString()); //Log information
-            var bg_value = $(".bg_select").spectrum('get').toHexString(); //Get the colour selected
+            let bg_value = $(".bg_select").spectrum('get').toHexString(); //Get the colour selected
             renderer.setClearColor(bg_value); //Set renderer colour to the selected hex value
             ssaaRenderPass.clearColor = bg_value;
             document.body.style.background = bg_value; //Set body of document to selected colour
@@ -274,10 +275,10 @@ function initScene(index) {
     });
 
     // postprocessing
-    var renderPass = new THREE.RenderPass( scene, camera );
+    let renderPass = new THREE.RenderPass( scene, camera );
 
-    var fxaaPass = new THREE.ShaderPass( THREE.FXAAShader );
-    var pixelRatio = renderer.getPixelRatio();
+    let fxaaPass = new THREE.ShaderPass( THREE.FXAAShader );
+    let pixelRatio = renderer.getPixelRatio();
 
     fxaaPass.material.uniforms[ 'resolution' ].value.x = 1 / ( window.innerWidth * pixelRatio );
     fxaaPass.material.uniforms[ 'resolution' ].value.y = 1 / ( window.innerHeight * pixelRatio );
@@ -293,14 +294,14 @@ function initScene(index) {
     composer.addPass( fxaaPass );
 
     /*LOAD SAMPLE MODELS*/
-    var sceneInfo = modelList[index]; //index from array of sample models in html select options
+    let sceneInfo = modelList[index]; //index from array of sample models in html select options
     loader = new THREE.OBJLoader(manager);
-    var url = sceneInfo.url;
+    let url = sceneInfo.url;
 
     //progress/loading bar
-    var onProgress = function (data) {
+    let onProgress = function (data) {
         if (data.lengthComputable) { //if size of file transfer is known
-            var percentage = Math.round((data.loaded * 100) / data.total);
+            let percentage = Math.round((data.loaded * 100) / data.total);
             console.log(percentage);
             statsNode.innerHTML = 'Loaded : ' + percentage + '%' + ' of ' + sceneInfo.name
             + '<br>'
@@ -309,7 +310,7 @@ function initScene(index) {
             $('.progress').val(percentage);
         }
     }
-    var onError = function (xhr) {
+    let onError = function (xhr) {
         console.log('ERROR');
     };
 
@@ -327,13 +328,13 @@ function initScene(index) {
             if (child instanceof THREE.Mesh) {
 
                 numOfMeshes++;
-                var geometry = child.geometry;
+                let geometry = child.geometry;
                 stats(sceneInfo.name, geometry, numOfMeshes);
 
                 child.material = materials.default_material;
 
-                var wireframe2 = new THREE.WireframeGeometry(child.geometry);
-                var edges = new THREE.LineSegments(wireframe2, materials.wireframeAndModel);
+                let wireframe2 = new THREE.WireframeGeometry(child.geometry);
+                let edges = new THREE.LineSegments(wireframe2, materials.wireframeAndModel);
                 materials.wireframeAndModel.visible = false;
                 sample_model.add(edges);
 
@@ -404,7 +405,7 @@ function removeModel() {
 
     camera.position.set(0, 0, 20); //Reset camera to initial position
     controls.reset(); //Reset controls, for when previous object has been moved around e.g. larger object = larger rotation
-    statsNode.innerHTML = ''; //Reset stats box (faces, vertices etc)
+    statsNode.innerHTML = ''; //Reset statistics box (faces, vertices etc)
 
     $("#red, #green, #blue, #ambient_red, #ambient_green, #ambient_blue").slider("value", 127); //Reset colour sliders
 
@@ -442,8 +443,8 @@ $("#red, #green, #blue, #ambient_red, #ambient_green, #ambient_blue").slider({
     }
 });
 
-var rotVal = [40, 80, 110, 140, 170, 200, 240, 280, 340, 400, 520]; //Rotation speeds low - high
-var rotation_speed;
+let rotVal = [40, 80, 110, 140, 170, 200, 240, 280, 340, 400, 520]; //Rotation speeds low - high
+let rotation_speed;
 
 $("#rot_slider").slider({
     orientation: "horizontal",
@@ -497,7 +498,7 @@ function setColours() {
 
 function getColours(r, g, b) {
 
-    var colour = [r.valueOf() / 255, g.valueOf() / 255, b.valueOf() / 255];
+    let colour = [r.valueOf() / 255, g.valueOf() / 255, b.valueOf() / 255];
     return colour;
 }
 
@@ -521,7 +522,7 @@ function animate() {
     render();
 
 }
-var modelList = [
+let modelList = [
             {
                 name: "crash.obj", url: 'sample_models/crash2.obj'
             },
@@ -548,15 +549,15 @@ function switchScene(index) {
 
     clear();
     initScene(index);
-    var elt = document.getElementById('scenes_list');
+    let elt = document.getElementById('scenes_list');
     elt.selectedIndex = index;
 
 }
 
 function selectModel() {
 
-    var select = document.getElementById("scenes_list");
-    var index = select.selectedIndex;
+    let select = document.getElementById("scenes_list");
+    let index = select.selectedIndex;
 
     if (index >= 0) {
         removeModel();     

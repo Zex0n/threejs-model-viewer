@@ -777,7 +777,7 @@ class lightObject {
     }
 
     setPosition (x, y, z) {
-        this.light_value.position.set(x,y,z).normalize();
+        this.light_value.position.set(x,y,z);
     }
 
     setTargetPosition (x, y, z) {
@@ -794,6 +794,10 @@ class lightObject {
         this.light_value.castShadow = this._cast_shadow;
         this.light_value.shadow.mapSize.width = 2048;
         this.light_value.shadow.mapSize.height = 2048;
+    }
+
+    setVisible (visible) {
+        this.light_value.visible = visible;
     }
 }
 $(document).ready(function() {
@@ -837,40 +841,48 @@ $(document).ready(function() {
 
         if (dropShadow.checked) {
             if (shadowLight === undefined) {
-                shadowLight = new THREE.DirectionalLight(0xffffff, 0.5);
-                shadowLight.position.set(0,5,5);
-                shadowLight.target.position.set(0,0,0);
-                shadowLight.shadow.camera.near = near;
-                shadowLight.shadow.camera.far = far;
-                shadowLight.shadow.camera.top = side;
-                shadowLight.shadow.camera.bottom = -side;
-                shadowLight.shadow.camera.left = side;
-                shadowLight.shadow.camera.right = -side;
-                shadowLight.castShadow = true;
-                shadowLight.shadow.mapSize.width = 2048;
-                shadowLight.shadow.mapSize.height = 2048;
-                scene.add(shadowLight);
+                shadowLight = new lightObject("DirectionalLight", 0xffffff, 0.5, true);
+                shadowLight.setPosition(0,5,5);
+                shadowLight.setTargetPosition(0,0,0);
+
+                // shadowLight = new THREE.DirectionalLight(0xffffff, 0.5);
+                // shadowLight.position.set(0,5,5);
+                //shadowLight.target.position.set(0,0,0);
+                // shadowLight.shadow.camera.near = near;
+                // shadowLight.shadow.camera.far = far;
+                // shadowLight.shadow.camera.top = side;
+                // shadowLight.shadow.camera.bottom = -side;
+                // shadowLight.shadow.camera.left = side;
+                // shadowLight.shadow.camera.right = -side;
+                // shadowLight.castShadow = true;
+                // shadowLight.shadow.mapSize.width = 2048;
+                // shadowLight.shadow.mapSize.height = 2048;
+                scene.add(shadowLight.getLight());
             } else {
-                shadowLight.visible = true;
+                shadowLight.setVisible(true);
             }
-            directionalLight2.visible = false;
-            directionalLight3.visible = false;
+            directionalLights[1].setVisible(false);
+            directionalLights[2].setVisible(false);
         } else {
-            shadowLight.visible = false;
-            directionalLight2.visible = true;
-            directionalLight3.visible = true;
+            shadowLight.setVisible(false);
+            directionalLights[1].setVisible(true);
+            directionalLights[2].setVisible(true);
         }
     });
+    let shadowHelper;
     $('#drop_shadow_light_helper').change(function() {
         console.log("drop_shadow_light_helper");
-        let shadowHelper = new THREE.CameraHelper( light.shadow.camera );
-        scene.add( shadowHelper );
-        console.log(shadowHelper);
+
 
         if (dropShadowLightHelper.checked) {
-
+            if (shadowHelper === undefined) {
+                shadowHelper = new THREE.CameraHelper( shadowLight.getLight().shadow.camera );
+                scene.add( shadowHelper );
+                console.log(shadowHelper);
+            }
+            shadowHelper.visible = true;
         } else {
-
+            shadowHelper.visible = false;
         }
     });
 });
