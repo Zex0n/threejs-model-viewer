@@ -853,10 +853,6 @@ $(document).ready(function() {
                 shadowLight.setPosition(0,15,15);
                 shadowLight.setTargetPosition(0,0,0);
 
-                $('#light_x').val(shadowLight.getPosition('x'));
-                $('#light_y').val(shadowLight.getPosition('y'));
-                $('#light_z').val(shadowLight.getPosition('z'));
-
                 // shadowLight = new THREE.DirectionalLight(0xffffff, 0.5);
                 // shadowLight.position.set(0,5,5);
                 //shadowLight.target.position.set(0,0,0);
@@ -875,10 +871,16 @@ $(document).ready(function() {
             }
             directionalLights[1].setVisible(false);
             directionalLights[2].setVisible(false);
+
+            $('#light_x').val(shadowLight.getPosition('x'));
+            $('#light_y').val(shadowLight.getPosition('y'));
+            $('#light_z').val(shadowLight.getPosition('z'));
         } else {
             shadowLight.setVisible(false);
             directionalLights[1].setVisible(true);
             directionalLights[2].setVisible(true);
+
+            $('.light_input').val('');
         }
     });
     let shadowHelper;
