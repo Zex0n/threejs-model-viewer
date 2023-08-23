@@ -758,6 +758,10 @@ class lightObject {
         return this.light_value;
     }
 
+    getPosition(axis) {
+        return this.light_value.position[axis];
+    }
+
     setLight (color, intensity) {
         //shadowLight = new THREE.DirectionalLight(0xffffff, 0.5);
         if (this._light_type === "DirectionalLight")
@@ -833,6 +837,10 @@ $(document).ready(function() {
 
     // Drop Shadow block
 
+    $('.light_input').change(function() {
+        shadowLight.setPosition(parseInt($('#light_x').val()), parseInt($('#light_y').val()), parseInt($('#light_z').val()));
+    });
+
     $('#drop_shadow').change(function() {
         let near = 0.1, far = 1000, fov = 90, side = 150;
         console.log("drop_shadow");
@@ -842,8 +850,12 @@ $(document).ready(function() {
         if (dropShadow.checked) {
             if (shadowLight === undefined) {
                 shadowLight = new lightObject("DirectionalLight", 0xffffff, 0.5, true);
-                shadowLight.setPosition(0,5,5);
+                shadowLight.setPosition(0,15,15);
                 shadowLight.setTargetPosition(0,0,0);
+
+                $('#light_x').val(shadowLight.getPosition('x'));
+                $('#light_y').val(shadowLight.getPosition('y'));
+                $('#light_z').val(shadowLight.getPosition('z'));
 
                 // shadowLight = new THREE.DirectionalLight(0xffffff, 0.5);
                 // shadowLight.position.set(0,5,5);
