@@ -181,6 +181,12 @@ function initScene(index) {
     floorPlane.castShadow = false;
     scene.add(floorPlane);
 
+    const helper = new THREE.GridHelper( 2000, 100 );
+    helper.position.set(0,0,0);
+    helper.material.opacity = 0.25;
+    helper.material.transparent = true;
+    scene.add( helper );
+
     /*LIGHTS*/
     directionalLights[0] = new lightObject("DirectionalLight", 0xffeedd, 1, false);
     directionalLights[0].setPosition(0, 0, 1);
