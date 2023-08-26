@@ -15,7 +15,8 @@ let bg_Texture = false;
 let glow_value, selectedObject, composer, effectFXAA, position, outlinePass, ssaaRenderPass;
 let clock = new THREE.Clock();
 
-let ambient, directionalLight, directionalLight2, directionalLight3, pointLight, bg_colour, shadowLight;
+let ambient, directionalLight, directionalLight2, directionalLight3, pointLight, bg_colour, shadowLight, shadowHelper,
+    floorPlaneHelper;
 let directionalLights = [];
 let backgroundScene, backgroundCamera, backgroundMesh;
 
@@ -36,6 +37,7 @@ let amb = document.getElementById('ambient_light'),
     saveAsSprite = document.getElementById('save_as_sprite'),
     canvasSize = document.getElementById('canvas_size');
     dropShadowLightHelper = document.getElementById('drop_shadow_light_helper');
+    dropShadowShowPlane = document.getElementById('drop_shadow_show_plane');
     dropShadow = document.getElementById('drop_shadow');
 
 //ANIMATION GLOBALS
@@ -179,13 +181,9 @@ function initScene(index) {
     floorPlane.rotation.x -= Math.PI/2;
     floorPlane.receiveShadow = true;
     floorPlane.castShadow = false;
+    floorPlane.visible = false;
     scene.add(floorPlane);
 
-    const helper = new THREE.GridHelper( 2000, 100 );
-    helper.position.set(0,0,0);
-    helper.material.opacity = 0.25;
-    helper.material.transparent = true;
-    scene.add( helper );
 
     /*LIGHTS*/
     directionalLights[0] = new lightObject("DirectionalLight", 0xffeedd, 1, false);

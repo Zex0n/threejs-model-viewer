@@ -743,7 +743,7 @@ class lightObject {
         this._near = 0.1;
         this._far = 1000;
         this._fov = 90;
-        this._side = 150;
+        this._side = 100;
         this._cast_shadow = castShadow;
         this._light_type = light_type;
 
@@ -791,17 +791,23 @@ class lightObject {
     setShadowParams () {
         this.light_value.shadow.camera.near = this._near;
         this.light_value.shadow.camera.far = this._far;
-        this.light_value.shadow.camera.top = this._side;
-        this.light_value.shadow.camera.bottom = -this._side;
-        this.light_value.shadow.camera.left = this._side;
-        this.light_value.shadow.camera.right = -this._side;
         this.light_value.castShadow = this._cast_shadow;
+        this.setCameraSize(this._side);
         this.light_value.shadow.mapSize.width = 2048;
         this.light_value.shadow.mapSize.height = 2048;
     }
 
     setVisible (visible) {
         this.light_value.visible = visible;
+    }
+
+    setCameraSize(size) {
+        this._side = size;
+        this.light_value.shadow.camera.top = size;
+        this.light_value.shadow.camera.bottom = -size;
+        this.light_value.shadow.camera.left = size;
+        this.light_value.shadow.camera.right = -size;
+        this.light_value.shadow.camera.updateProjectionMatrix();
     }
 }
 $(document).ready(function() {
@@ -838,11 +844,19 @@ $(document).ready(function() {
     // Drop Shadow block
 
     $('.light_input').change(function() {
-        shadowLight.setPosition(parseInt($('#light_x').val()), parseInt($('#light_y').val()), parseInt($('#light_z').val()));
+        if (shadowLight) {
+            shadowLight.setPosition(parseInt($('#light_x').val()), parseInt($('#light_y').val()), parseInt($('#light_z').val()));
+            shadowLight.setCameraSize(parseInt($('#light_area_size').val()));
+            shadowLight.setPosition(parseInt($('#plane_x').val()), parseInt($('#plane_y').val()), parseInt($('#plane_z').val()));
+
+            if (shadowHelper)
+                shadowHelper.update();
+
+            //plane_x
+        }
     });
 
     $('#drop_shadow').change(function() {
-        let near = 0.1, far = 1000, fov = 90, side = 150;
         console.log("drop_shadow");
 
         console.log(shadowLight);
@@ -875,19 +889,21 @@ $(document).ready(function() {
             $('#light_x').val(shadowLight.getPosition('x'));
             $('#light_y').val(shadowLight.getPosition('y'));
             $('#light_z').val(shadowLight.getPosition('z'));
+
+            $('#light_area_size').val(shadowLight._side);
+            floorPlane.visible = true;
         } else {
             shadowLight.setVisible(false);
             directionalLights[1].setVisible(true);
             directionalLights[2].setVisible(true);
 
             $('.light_input').val('');
+            floorPlane.visible = false;
         }
     });
-    let shadowHelper;
+
     $('#drop_shadow_light_helper').change(function() {
         console.log("drop_shadow_light_helper");
-
-
         if (dropShadowLightHelper.checked) {
             if (shadowHelper === undefined) {
                 shadowHelper = new THREE.CameraHelper( shadowLight.getLight().shadow.camera );
@@ -897,6 +913,27 @@ $(document).ready(function() {
             shadowHelper.visible = true;
         } else {
             shadowHelper.visible = false;
+        }
+    });
+
+    $('#drop_shadow_show_plane').change(function() {
+        console.log("drop_shadow_show_plane");
+        if (dropShadowShowPlane.checked) {
+            if (floorPlaneHelper === undefined) {
+                floorPlaneHelper = new THREE.GridHelper( 2000, 100 );
+                floorPlaneHelper.position.set(0,0,0);
+                floorPlaneHelper.material.opacity = 0.9;
+                floorPlaneHelper.material.transparent = true;
+                scene.add( floorPlaneHelper );
+            }
+            floorPlaneHelper.visible = true;
+
+            $('#plane_x').val(floorPlaneHelper.getPosition('x'));
+            $('#plane_y').val(floorPlaneHelper.getPosition('y'));
+            $('#plane_z').val(floorPlaneHelper.getPosition('z'));
+            $('#light_area_size').val(floorPlaneHelper.width);
+        } else {
+            floorPlaneHelper.visible = false;
         }
     });
 });
