@@ -920,7 +920,8 @@ $(document).ready(function() {
         console.log("drop_shadow_show_plane");
         if (dropShadowShowPlane.checked) {
             if (floorPlaneHelper === undefined) {
-                floorPlaneHelper = new THREE.GridHelper( 2000, 100 );
+                //floorPlaneHelper = new THREE.GridHelper( 2000, 100 );
+                floorPlaneHelper = new THREE.InfiniteGridHelper(10, 100);
                 floorPlaneHelper.position.set(0,0,0);
                 floorPlaneHelper.material.opacity = 0.9;
                 floorPlaneHelper.material.transparent = true;
@@ -928,9 +929,9 @@ $(document).ready(function() {
             }
             floorPlaneHelper.visible = true;
 
-            $('#plane_x').val(floorPlaneHelper.getPosition('x'));
-            $('#plane_y').val(floorPlaneHelper.getPosition('y'));
-            $('#plane_z').val(floorPlaneHelper.getPosition('z'));
+            // $('#plane_x').val(floorPlaneHelper.getPosition('x'));
+            // $('#plane_y').val(floorPlaneHelper.getPosition('y'));
+            // $('#plane_z').val(floorPlaneHelper.getPosition('z'));
             $('#light_area_size').val(floorPlaneHelper.width);
         } else {
             floorPlaneHelper.visible = false;
