@@ -165,7 +165,7 @@ function initScene(index) {
 
 
 
-
+/*
     let floor_geometry = new THREE.PlaneGeometry(1000,1000);
     //let floor_material = new THREE.MeshPhongMaterial({color: 0xffffff, shininess: 0 });
     let floor_material = new THREE.ShadowMaterial({
@@ -182,7 +182,7 @@ function initScene(index) {
     floorPlane.receiveShadow = true;
     floorPlane.castShadow = false;
     floorPlane.visible = false;
-    scene.add(floorPlane);
+    scene.add(floorPlane);*/
 
 
     /*LIGHTS*/
@@ -360,6 +360,7 @@ function initScene(index) {
         setPolarGrid(sample_model);
         setGrid(sample_model);
         setAxis(sample_model);
+        setShadowPlane(sample_model);
 
         scaleUp(sample_model);
         scaleDown(sample_model);

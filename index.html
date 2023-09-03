@@ -40,7 +40,6 @@
     <script src="js/THREEx.WindowResize.js"></script>
     <script src="js/InfiniteGridHelper.js"></script>
     <script src="js/screenfull.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.7.6/dat.gui.min.js"></script>
 
     <!--Post-Processing-->
     <script src="js/effects/EffectComposer.js"></script>
@@ -209,9 +208,9 @@
 
                         <li><span style="font-size: 12px">Light Position</span></li>
                         <li>
-                            <input type='number' id="light_x" class="light_input" placeholder="X" />
-                            <input type='number' id="light_y" class="light_input" placeholder="Y" />
-                            <input type='number' id="light_z" class="light_input" placeholder="Z" />
+                            X:<input type='number' id="light_x" class="light_input" placeholder="X" />
+                            Y:<input type='number' id="light_y" class="light_input" placeholder="Y" />
+                            Z:<input type='number' id="light_z" class="light_input" placeholder="Z" />
                         </li>
                         <div style='clear:both'></div>
                         <li><span style="font-size: 12px">Light Area Size</span></li>
@@ -231,16 +230,24 @@
 
                         <li><span style="font-size: 12px">Shadow Plane Position</span></li>
                         <li>
-                            <input type='number' id="plane_x" class="light_input" placeholder="X" />
-                            <input type='number' id="plane_y" class="light_input" placeholder="Y" />
-                            <input type='number' id="plane_z" class="light_input" placeholder="Z" />
+                            X:<input type='number' id="plane_x" class="light_input" placeholder="X" value="0" />
+                            Y:<input type='number' id="plane_y" class="light_input" placeholder="Y" value="0" />
+                            Z:<input type='number' id="plane_z" class="light_input" placeholder="Z" value="0" />
+                        </li>
+                        <div style='clear:both'></div>
+
+                        <li><span style="font-size: 12px">Shadow Plane Rotation</span></li>
+                        <li>
+                            X:<input type='number' id="plane_rotation_x" class="light_input" placeholder="X Rotation" value="0" />
+                            Y:<input type='number' id="plane_rotation_y" class="light_input" placeholder="Y Rotation" value="0" />
+                            Z:<input type='number' id="plane_rotation_z" class="light_input" placeholder="Z Rotation" value="0" />
                         </li>
                         <div style='clear:both'></div>
 
                         <li><span style="font-size: 12px">Plane Size</span></li>
                         <li>
-                            <input type='number' id="plane_size_w" class="light_input" placeholder="Width" />
-                            <input type='number' id="plane_size_h" class="light_input" placeholder="Height" />
+                            Width:<input type='number' id="plane_size_w" class="light_input" placeholder="Width" />
+                            Height:<input type='number' id="plane_size_h" class="light_input" placeholder="Height" />
                         </li>
                         <div style='clear:both'></div>
                     </ul>

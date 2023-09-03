@@ -8,6 +8,10 @@ function stats(modelName, geometry, numOfMeshes) {
            + 'Number of faces: ' + '<span class="statsText">' + geometry.attributes.position.count / 3 + '</span>'
            + '<br>'
            + 'Number of Meshes: ' + '<span class="statsText">' + numOfMeshes + '</span>';
+
+            console.log(geometry);
+            // console.log(geometry.boundingBox.min.y + " " + mesh.geometry.boundingBox.max.y);
+            // console.log(geometry.boundingBox.min.z + " " + mesh.geometry.boundingBox.max.z);
     }
 
 }
@@ -485,6 +489,40 @@ function resetRotation(mod) {
     });
 }
 
+function setShadowLight(mod) {
+    let bbox = new THREE.Box3().setFromObject(mod),
+        height = bbox.getSize().y,
+        dist = Math.ceil(height / (2 * Math.tan(camera.fov * Math.PI / 360))),
+        pos = scene.position;
+
+    shadowLight = new lightObject("DirectionalLight", 0xffffff, 0.5, true);
+    shadowLight.setPosition(pos.x, dist, dist);
+    shadowLight.setTargetPosition(scene.position.x, scene.position.y, scene.position.z);
+    shadowLight.setCameraSize(parseInt(Math.max(bbox.getSize().x, bbox.getSize().y, bbox.getSize().z)));
+    shadowLight.setVisible(false);
+    scene.add(shadowLight.getLight());
+}
+
+function setShadowPlane(mod) {
+    let bbox = new THREE.Box3().setFromObject(mod),
+        x_size = bbox.getSize().x,
+        z_size = bbox.getSize().z,
+        floor_material = new THREE.MeshPhongMaterial({color: 0xffffff, shininess: 0 }),
+        //floor_material = new THREE.ShadowMaterial({opacity: 0.5})
+        floor_geometry = new THREE.PlaneGeometry(x_size, z_size);
+    console.log(bbox.getSize());
+
+    floorPlane = new THREE.Mesh(floor_geometry, floor_material);
+    floorPlane.position.set(0,0,0);
+    floorPlane.rotation.x -= Math.PI/2;
+    floorPlane.receiveShadow = true;
+    floorPlane.castShadow = false;
+    floorPlane.visible = false;
+    scene.add(floorPlane);
+    setShadowLight(mod);
+}
+
+
 /*Animation Controls */
 //credit: https://raw.githubusercontent.com/mrdoob/three.js/dev/editor/js/Sidebar.Animation.js
 
@@ -592,7 +630,9 @@ document.getElementById("stop").onclick = stopAnimations;
 
 
 
-
+function objectRotaion(object, degreeX=0, degreeY=0, degreeZ=0) {
+   object.rotation.set(THREE.Math.degToRad(degreeX), THREE.Math.degToRad(degreeY), THREE.Math.degToRad(degreeZ));
+}
 
 class saveSprites {
     constructor(mixer, model) {
@@ -847,7 +887,7 @@ $(document).ready(function() {
         if (shadowLight) {
             shadowLight.setPosition(parseInt($('#light_x').val()), parseInt($('#light_y').val()), parseInt($('#light_z').val()));
             shadowLight.setCameraSize(parseInt($('#light_area_size').val()));
-            shadowLight.setPosition(parseInt($('#plane_x').val()), parseInt($('#plane_y').val()), parseInt($('#plane_z').val()));
+            floorPlane.position.set(parseInt($('#plane_x').val()), parseInt($('#plane_y').val()), parseInt($('#plane_z').val()));
 
             if (shadowHelper)
                 shadowHelper.update();
@@ -863,7 +903,7 @@ $(document).ready(function() {
 
         if (dropShadow.checked) {
             if (shadowLight === undefined) {
-                shadowLight = new lightObject("DirectionalLight", 0xffffff, 0.5, true);
+/*                shadowLight = new lightObject("DirectionalLight", 0xffffff, 0.5, true);
                 shadowLight.setPosition(0,15,15);
                 shadowLight.setTargetPosition(0,0,0);
 
@@ -879,7 +919,7 @@ $(document).ready(function() {
                 // shadowLight.castShadow = true;
                 // shadowLight.shadow.mapSize.width = 2048;
                 // shadowLight.shadow.mapSize.height = 2048;
-                scene.add(shadowLight.getLight());
+                scene.add(shadowLight.getLight());*/
             } else {
                 shadowLight.setVisible(true);
             }
@@ -920,8 +960,8 @@ $(document).ready(function() {
         console.log("drop_shadow_show_plane");
         if (dropShadowShowPlane.checked) {
             if (floorPlaneHelper === undefined) {
-                //floorPlaneHelper = new THREE.GridHelper( 2000, 100 );
-                floorPlaneHelper = new THREE.InfiniteGridHelper(10, 100);
+                floorPlaneHelper = new THREE.GridHelper( 2000, 100 );
+                //floorPlaneHelper = new THREE.InfiniteGridHelper(10, 100, null, null, 'xyz' );
                 floorPlaneHelper.position.set(0,0,0);
                 floorPlaneHelper.material.opacity = 0.9;
                 floorPlaneHelper.material.transparent = true;
@@ -932,7 +972,7 @@ $(document).ready(function() {
             // $('#plane_x').val(floorPlaneHelper.getPosition('x'));
             // $('#plane_y').val(floorPlaneHelper.getPosition('y'));
             // $('#plane_z').val(floorPlaneHelper.getPosition('z'));
-            $('#light_area_size').val(floorPlaneHelper.width);
+            //$('#light_area_size').val(floorPlaneHelper.width);
         } else {
             floorPlaneHelper.visible = false;
         }

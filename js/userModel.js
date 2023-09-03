@@ -82,9 +82,6 @@ var loadFile = function (file) {
                 alert("Problem parsing file: " + filename + "\n\n" + "ERROR MESSAGE: " + err.message);
             }
 
-            model.receiveShadow = true;
-            model.castShadow = true;
-
             model.traverse(function (child) {
                 if (child instanceof THREE.Mesh) {
 
@@ -123,6 +120,7 @@ var loadFile = function (file) {
             setPolarGrid(model);
             setGrid(model);
             setAxis(model);
+            setShadowPlane(sample_model);
 
             scaleUp(model);
             scaleDown(model);
